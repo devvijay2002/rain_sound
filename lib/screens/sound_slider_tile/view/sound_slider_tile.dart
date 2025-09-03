@@ -27,11 +27,29 @@ class SoundSliderTile extends StatelessWidget {
 
         title: Padding(
           padding: const EdgeInsets.only(top: 5.0),
-          child: Text(
-            sound.name,
-            style: TextStyle(fontSize:16,color: Colors.white, fontWeight: FontWeight.bold,fontFamily: GoogleFonts.cinzelDecorative(
-                fontWeight: FontWeight.w700
-            ).fontFamily),
+          child: Row(
+            children: [
+              Text(
+                sound.name,
+                style: TextStyle(fontSize:16,color: Colors.white, fontWeight: FontWeight.bold,fontFamily: GoogleFonts.cinzelDecorative(
+                    fontWeight: FontWeight.w700
+                ).fontFamily),
+              ),
+              Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  border: Border.all(color: Colors.white.withOpacity(0.5))
+                ),
+                child: Row(
+                  children: [
+                    Text("rain1",style: TextStyle(fontSize: 12,color: Colors.white),),
+                    Icon(Icons.arrow_drop_down_outlined, color: Colors.white,),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
         subtitle: SliderTheme(
@@ -40,7 +58,7 @@ class SoundSliderTile extends StatelessWidget {
             activeTrackColor: Color(0xffb87767),
             inactiveTrackColor: Colors.white,
             thumbColor: Colors.white,
-            overlayColor: Colors.white.withOpacity(0.3),
+            overlayColor: Colors.white.withOpacity(0.8),
             valueIndicatorColor: Colors.white,
             valueIndicatorTextStyle: const TextStyle(
               color: Colors.black,

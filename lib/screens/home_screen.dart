@@ -1,6 +1,6 @@
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rain_round/const/images.dart';
 import 'package:rain_round/screens/sound_slider_tile/view/sound_slider_tile.dart';
@@ -14,7 +14,71 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
 class _HomeScreenState extends State<HomeScreen> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: AssetImage(bgImage),fit: BoxFit.cover)
+        ),
+        child: Column(
+          children: [
+        
+            SafeArea(
+              child: Container(
+                margin: EdgeInsets.only(top: 20,left: 10),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.white.withOpacity(0.3),
+                      child: Icon(Icons.cloudy_snowing, color: Colors.white),
+                    ),
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Rain Sound",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontFamily:
+                                GoogleFonts.cinzelDecorative(
+                                  fontWeight: FontWeight.w700,
+                                ).fontFamily,
+                          ),
+                        ),
+                        Text(
+                          'Relax & Sleep',
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            BodyWidget()
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BodyWidget extends StatefulWidget {
+  const BodyWidget({super.key});
+
+  @override
+  State<BodyWidget> createState() => _BodyWidgetState();
+}
+
+class _BodyWidgetState extends State<BodyWidget> {
   final AudioServiceController _audioService = AudioServiceController();
   bool _isOn = true;
   double _masterVolume = 1.0;
@@ -88,309 +152,133 @@ class _HomeScreenState extends State<HomeScreen> {
     _audioService.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage(bgImage), fit: BoxFit.cover),
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            // glassy effect
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              ...kSounds.map(
+                    (sound) => Column(
+                  children: [
+                    SoundSliderTile(
+                      sound: sound,
+                      value: _volumes[sound.id] ?? 0.5,
+                      enabled: _isOn,
+                      onChanged: (v) => _setVolume(sound.id, v),
+                    ),
+                    if (sound != kSounds.last)
+                      Divider(
+                        color: Colors.white.withOpacity(0.2),
+                        // thickness: 1,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        child: SafeArea(
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            // glassy effect
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          alignment: Alignment.center,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              // vertical: 8,
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white.withOpacity(0.3),
-                        child: Icon(Icons.cloudy_snowing, color: Colors.white),
-                      ),
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Rain Sound",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily:
-                                  GoogleFonts.cinzelDecorative(
-                                    fontWeight: FontWeight.w700,
-                                  ).fontFamily,
-                            ),
-                          ),
-                          Text(
-                            'Relax & Sleep',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
-                    // glassy effect
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 1.5,
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: [
-                      ...kSounds.map(
-                        (sound) => Column(
-                          children: [
-                            SoundSliderTile(
-                              sound: sound,
-                              value: _volumes[sound.id] ?? 0.5,
-                              enabled: _isOn,
-                              onChanged: (v) => _setVolume(sound.id, v),
-                            ),
-                            if (sound != kSounds.last)
-                              Divider(
-                                color: Colors.white.withOpacity(0.3),
-                                // thickness: 1,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  /*Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    // vertical: 8,
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.volume_up, color: Colors.white),
-                      Expanded(
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: InkWell(
+                        onTap: _toggleOn,
                         child: Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 15,
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 6),
+                          padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.12),
-                            // glassy effect
+                            shape: BoxShape.rectangle,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: Colors.white.withOpacity(0.3),
-                              width: 1.5,
-                            ),
+                            )
                           ),
-
-                          alignment: Alignment.center,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 4,
-                              activeTrackColor: Color(0xffd38677),
-                              inactiveTrackColor: Colors.white,
-                              thumbColor: Colors.white,
-                              overlayColor: Colors.white.withOpacity(0.3),
-                              valueIndicatorColor: Colors.white,
-                              valueIndicatorTextStyle: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 10,
-                              ),
-                              tickMarkShape: const RoundSliderTickMarkShape(),
-                              activeTickMarkColor: Colors.white,
-                              inactiveTickMarkColor: Colors.white,
-                            ),
-                            child: Slider(
-                              value: _masterVolume,
-                              onChanged: _setMasterVolume,
-                              min: 0.0,
-                              max: 1.0,
-                              divisions: 10,
-                              label: "Master: ${(_masterVolume * 100).toInt()}%",
-                            ),
+                          child: Icon(
+                            Icons.power_settings_new_sharp,
+                            color: _isOn ? Color(0xffd38677) : Colors.white,
+                            size: 35,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.only(bottom: 96),
-                    children: [
-                      ...kSounds.map(
-                        (sound) => SoundSliderTile(
-                          sound: sound,
-                          value: _volumes[sound.id] ?? 0.5,
-                          enabled: _isOn,
-                          onChanged: (v) => _setVolume(sound.id, v),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),*/
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  padding: EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
-                    // glassy effect
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 1.5,
                     ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      // vertical: 8,
-                    ),
-                    child: Row(
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.volume_up, color: Colors.white),
-                        Expanded(
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 4,
-                              activeTrackColor: Color(0xffd38677),
-                              inactiveTrackColor: Colors.white,
-                              thumbColor: Colors.white,
-                              overlayColor: Colors.white.withOpacity(0.3),
-                              valueIndicatorColor: Colors.white,
-                              valueIndicatorTextStyle: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 10,
-                              ),
-                              tickMarkShape: const RoundSliderTickMarkShape(),
-                              activeTickMarkColor: Colors.white,
-                              inactiveTickMarkColor: Colors.white,
-                            ),
-                            child: Slider(
-                              value: _masterVolume,
-                              onChanged: _setMasterVolume,
-                              min: 0.0,
-                              max: 1.0,
-                              divisions: 10,
-                              label: "Master: ${(_masterVolume * 100).toInt()}%",
-                            ),
-                          ),
-                        ),
+                        Text("Global Controller",
+                            style: TextStyle(color: Colors.white,
+                              fontSize: 18,fontFamily: GoogleFonts.lato().fontFamily,)),
+                        Text("Master Volume & Sound Controller",
+                            style: TextStyle(color: Colors.white,
+                              fontSize: 12,fontFamily: GoogleFonts.lato().fontFamily,)),
                       ],
-                    ),
-                  ),
-                  /*Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.only(bottom: 96),
-                      children: [
-                        ...kSounds.map(
-                              (sound) => SoundSliderTile(
-                            sound: sound,
-                            value: _volumes[sound.id] ?? 0.5,
-                            enabled: _isOn,
-                            onChanged: (v) => _setVolume(sound.id, v),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),*/
-                  /*Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    // vertical: 8,
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.volume_up, color: Colors.white),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 15,
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.12),
-                            // glassy effect
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 1.5,
-                            ),
-                          ),
+                    )
 
-                          alignment: Alignment.center,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 4,
-                              activeTrackColor: Color(0xffd38677),
-                              inactiveTrackColor: Colors.white,
-                              thumbColor: Colors.white,
-                              overlayColor: Colors.white.withOpacity(0.3),
-                              valueIndicatorColor: Colors.white,
-                              valueIndicatorTextStyle: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 10,
-                              ),
-                              tickMarkShape: const RoundSliderTickMarkShape(),
-                              activeTickMarkColor: Colors.white,
-                              inactiveTickMarkColor: Colors.white,
-                            ),
-                            child: Slider(
-                              value: _masterVolume,
-                              onChanged: _setMasterVolume,
-                              min: 0.0,
-                              max: 1.0,
-                              divisions: 10,
-                              label: "Master: ${(_masterVolume * 100).toInt()}%",
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.only(bottom: 96),
-                    children: [
-                      ...kSounds.map(
-                        (sound) => SoundSliderTile(
-                          sound: sound,
-                          value: _volumes[sound.id] ?? 0.5,
-                          enabled: _isOn,
-                          onChanged: (v) => _setVolume(sound.id, v),
+                Row(
+                  children: [
+                    SizedBox(width: 20),
+                    const Icon(Icons.volume_up, color: Colors.white),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 4,
+                          activeTrackColor: Color(0xffd38677),
+                          thumbColor: Colors.white,
+                        ),
+                        child: Slider(
+                          value: _masterVolume,
+                          onChanged: _setMasterVolume,
+                          min: 0.0,
+                          max: 1.0,
+
+                          //label: "Master: ${(_masterVolume * 100).toInt()}%",
                         ),
                       ),
-                    ],
-                  ),
-                ),*/
-                )
+                    ),
+                  ],
+                ),
+
               ],
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _toggleOn,
-        backgroundColor: Colors.black.withOpacity(0.5),
-        child: Icon(
-          Icons.power_settings_new_sharp,
-          color: _isOn ? Color(0xffd38677) : Colors.white,
-          size: 35,
-        ),
-      ),
+        )
+      ],
     );
   }
 }
