@@ -17,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,46 +24,47 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(image: AssetImage(bgImage),fit: BoxFit.cover)
         ),
-        child: Column(
-          children: [
-        
-            SafeArea(
-              child: Container(
-                margin: EdgeInsets.only(top: 20,left: 10),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.white.withOpacity(0.3),
-                      child: Icon(Icons.cloudy_snowing, color: Colors.white),
-                    ),
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Rain Sound",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontFamily:
-                                GoogleFonts.cinzelDecorative(
-                                  fontWeight: FontWeight.w700,
-                                ).fontFamily,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SafeArea(
+                child: Container(
+                  margin: EdgeInsets.only(top: 20,left: 10),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.white.withOpacity(0.3),
+                        child: Icon(Icons.cloudy_snowing, color: Colors.white),
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Rain Sound",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontFamily:
+                                  GoogleFonts.cinzelDecorative(
+                                    fontWeight: FontWeight.w700,
+                                  ).fontFamily,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Relax & Sleep',
-                          style: TextStyle(fontSize: 12, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Text(
+                            'Relax & Sleep',
+                            style: TextStyle(fontSize: 12, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 10),
-            BodyWidget()
-          ],
+              SizedBox(height: 10),
+              BodyWidget()
+            ],
+          ),
         ),
       ),
     );
@@ -96,7 +96,6 @@ class _BodyWidgetState extends State<BodyWidget> {
       for (var sound in kSounds) {
         _volumes[sound.id] = sound.defaultVolume;
       }
-
       await _audioService.initPlayers(kSounds);
     } catch (e) {
       debugPrint('Error initializing app: $e');
@@ -160,7 +159,7 @@ class _BodyWidgetState extends State<BodyWidget> {
           margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           padding: EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: Colors.white.withOpacity(0.2),
             // glassy effect
             borderRadius: BorderRadius.circular(8),
             border: Border.all(

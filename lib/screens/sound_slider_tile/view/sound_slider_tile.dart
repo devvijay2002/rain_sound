@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rain_round/screens/change_pop_up/view/change_popup_view.dart';
 import '../../../model/sound_model.dart';
 
 
@@ -36,17 +37,22 @@ class SoundSliderTile extends StatelessWidget {
                 ).fontFamily),
               ),
               Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(color: Colors.white.withOpacity(0.5))
-                ),
-                child: Row(
-                  children: [
-                    Text("rain1",style: TextStyle(fontSize: 12,color: Colors.white),),
-                    Icon(Icons.arrow_drop_down_outlined, color: Colors.white,),
-                  ],
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SongChangeBottomSheet()));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    border: Border.all(color: Colors.white.withOpacity(0.5))
+                  ),
+                  child: Row(
+                    children: [
+                      Text("rain1",style: TextStyle(fontSize: 12,color: Colors.white),),
+                      Icon(Icons.arrow_drop_down_outlined, color: Colors.white,),
+                    ],
+                  ),
                 ),
               )
             ],
