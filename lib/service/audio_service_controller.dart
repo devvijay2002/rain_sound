@@ -14,7 +14,6 @@ class AudioServiceController {
         await player.dispose();
       }
       _players.clear();
-
       for (final sound in sounds) {
         final player = AudioPlayer();
         await player.setAsset(sound.assetPath, preload: true);
@@ -55,6 +54,32 @@ class AudioServiceController {
     }
   }
 
+  Future<void> playOne(String playerId, double volume) async {
+    try {
+      final player = _players[playerId];
+
+      if (player == null) {
+        log("Player with id $playerId not found.");
+        return;
+      }
+
+      log("Setting volume for $playerId: $volume");
+      await player.setVolume(volume);
+
+      if (!player.playing) {
+        log("Starting player: $playerId");
+        await player.play();
+      } else {
+        log("Player already playing: $playerId");
+      }
+
+      log("Player $playerId started successfully.");
+    } catch (e, st) {
+      log("Error on playSingle($playerId): $e\n$st");
+    }
+  }
+
+
 // In AudioServiceController
 
   Future<void> stopAll() async {
@@ -78,6 +103,28 @@ class AudioServiceController {
       log("All players stopped: ${_players.length}");
     } catch (e, st) {
       log("Error on stopAll: $e\n$st");
+    }
+  }
+
+  Future<void> stopOne(String playerId) async {
+    try {
+      final player = _players[playerId];
+
+      if (player == null) {
+        log("Player with id $playerId not found.");
+        return;
+      }
+
+      log("Stopping player: $playerId, playing: ${player.playing}");
+
+      await player.pause();
+      await player.stop();
+      await player.seek(Duration.zero);
+      // await player.setVolume(0.0);
+
+      log("Player $playerId stopped successfully.");
+    } catch (e, st) {
+      log("Error on stopSingle($playerId): $e\n$st");
     }
   }
 

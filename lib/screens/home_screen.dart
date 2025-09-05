@@ -1,11 +1,13 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rain_round/const/images.dart';
 import 'package:rain_round/screens/sound_slider_tile/view/sound_slider_tile.dart';
 import 'package:rain_round/service/audio_service_controller.dart';
 import 'package:rain_round/service/sound_library.dart';
+
+import '../controller/sharecontroller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,22 +16,20 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage(bgImage),fit: BoxFit.cover)
+          image: DecorationImage(image: AssetImage(bgImage), fit: BoxFit.cover),
         ),
         child: SingleChildScrollView(
           child: Column(
             children: [
               SafeArea(
                 child: Container(
-                  margin: EdgeInsets.only(top: 20,left: 10),
+                  margin: EdgeInsets.only(top: 20, left: 10),
                   child: Row(
                     children: [
                       CircleAvatar(
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 10),
-              BodyWidget()
+              BodyWidget(),
             ],
           ),
         ),
@@ -79,8 +79,10 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+  var sharedController = Get.find<SharedController>();
   final AudioServiceController _audioService = AudioServiceController();
-  bool _isOn = true;
+
+  bool _isOn = false;
   double _masterVolume = 1.0;
   final Map<String, double> _volumes = {};
 
@@ -90,7 +92,7 @@ class _BodyWidgetState extends State<BodyWidget> {
     _initializeApp();
   }
 
-  Future<void> _initializeApp() async {
+    Future<void> _initializeApp() async {
     try {
       // Initialize volumes with default values
       for (var sound in kSounds) {
@@ -151,6 +153,7 @@ class _BodyWidgetState extends State<BodyWidget> {
     _audioService.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -171,9 +174,10 @@ class _BodyWidgetState extends State<BodyWidget> {
           child: Column(
             children: [
               ...kSounds.map(
-                    (sound) => Column(
+                (sound) => Column(
                   children: [
                     SoundSliderTile(
+                      audioService: _audioService,
                       sound: sound,
                       value: _volumes[sound.id] ?? 0.5,
                       enabled: _isOn,
@@ -224,7 +228,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: Colors.white.withOpacity(0.3),
-                            )
+                            ),
                           ),
                           child: Icon(
                             Icons.power_settings_new_sharp,
@@ -238,15 +242,24 @@ class _BodyWidgetState extends State<BodyWidget> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Global Controller",
-                            style: TextStyle(color: Colors.white,
-                              fontSize: 18,fontFamily: GoogleFonts.lato().fontFamily,)),
-                        Text("Master Volume & Sound Controller",
-                            style: TextStyle(color: Colors.white,
-                              fontSize: 12,fontFamily: GoogleFonts.lato().fontFamily,)),
+                        Text(
+                          "Global Controller",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontFamily: GoogleFonts.lato().fontFamily,
+                          ),
+                        ),
+                        Text(
+                          "Master Volume & Sound Controller",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontFamily: GoogleFonts.lato().fontFamily,
+                          ),
+                        ),
                       ],
-                    )
-
+                    ),
                   ],
                 ),
                 Row(
@@ -265,18 +278,16 @@ class _BodyWidgetState extends State<BodyWidget> {
                           onChanged: _setMasterVolume,
                           min: 0.0,
                           max: 1.0,
-
                           //label: "Master: ${(_masterVolume * 100).toInt()}%",
                         ),
                       ),
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

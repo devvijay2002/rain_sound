@@ -1,450 +1,155 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:rain_round/components/kcustom_button.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rain_round/model/sound_model.dart';
+import 'package:rain_round/service/sound_library.dart';
 
-import '../../../const/colors.dart';
+import '../../../service/audio_service_controller.dart';
 
+class ChangePopupView extends StatefulWidget {
+  final List<Sound> sounds;
+  final AudioServiceController audioService;
 
-class SongChangeBottomSheet extends StatefulWidget {
-  const SongChangeBottomSheet({
-    super.key
+  const ChangePopupView({
+    super.key,
+    required this.sounds,
+    required this.audioService,
   });
 
   @override
-  State<SongChangeBottomSheet> createState() => _SongChangeBottomSheetState();
+  State<ChangePopupView> createState() => _ChangePopupViewState();
 }
 
-class _SongChangeBottomSheetState extends State<SongChangeBottomSheet> {
+class _ChangePopupViewState extends State<ChangePopupView> {
+  final Map<String, double> _volumes = {};
+  final AudioServiceController _audioService = AudioServiceController();
+
+  String playerId = "";
+
+  Future<void> _toggleOn({required String playId}) async {
+    if (playerId == playId) {
+      // If same sound tapped again -> stop it
+      await _audioService.stopOne(playId);
+      playerId = '';
+    } else {
+      // Stop previous one first
+      if (playerId.isNotEmpty) {
+        await _audioService.stopOne(playerId);
+      }
+      // Play new one
+      await _audioService.playOne(playId, 1);
+      playerId = playId;
+    }
+
+    setState(() {}); // refresh UI
+  }
+
+
+  Future<void> _initializeApp() async {
+    try {
+      // Initialize volumes with default values
+      for (var sound in widget.sounds) {
+        _volumes[sound.id] = sound.defaultVolume;
+      }
+      await _audioService.initPlayers(widget.sounds);
+    } catch (e) {
+      debugPrint('Error initializing app: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    _initializeApp();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _audioService.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Get.height/1.8,
+    log('build');
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 13.0, vertical: 12),
+        padding: const EdgeInsets.only(top: 22.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 15,
+            Text(
+              'Change Sound',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontFamily:
+                    GoogleFonts.cinzelDecorative(
+                      fontWeight: FontWeight.w700,
+                    ).fontFamily,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              children: [
-                buildTitleSection("Select Address"),
-                GestureDetector(
-                  onTap: () {
-                  },
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.add_circle,
-                        color:
-                        kPrimaryColor,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      buildTitleSection("Add Address"),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                itemCount: 10,
                 shrinkWrap: true,
+                itemCount: widget.sounds.length,
                 itemBuilder: (context, index) {
-                  return  Container(
-                    margin: const EdgeInsets.only(bottom: 13),
-
+                  return Container(
+                    // padding: const EdgeInsets.all(3.0),
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 5.0,
+                      horizontal: 10,
+                    ),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20.0),
-                          child: ListTile(
-                            title: Text(
-                                'Address: '),
-                            subtitle: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Text('Contact No: '),
-                                Text('Name: '),
-                              ],
-                            ),
-                          ),
+                      border: Border.all(color: Colors.white.withOpacity(0.5)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        widget.sounds[index].name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily:
+                              GoogleFonts.lato(
+                                fontWeight: FontWeight.w700,
+                              ).fontFamily,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Positioned(
-                          right: 8,
-                          top: 8,
-                          child: GestureDetector(
-                            onTap: () {
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 14),
-                              child: Icon(Icons.edit),
-                            ),
-                          ),
-                        ),
-                        /*Positioned(
-                          right: 8,
-                          bottom: 8,
-                          child: Checkbox(
-                            activeColor: kPrimaryColor,
-                            value: isSelected,
-                            onChanged: (value) {
-                              searchSalonController.userAddressId.value = userAddressList[index].addressId;
-                              log("Selected Address Id: ${searchSalonController.userAddressId.value}");
-                            },
-                          ),
-                        ),*/
-                      ],
+                      ),
+                      trailing: InkWell(
+                        onTap: () async {
+                          await _toggleOn(playId: widget.sounds[index].id);
+
+                        },
+                        child:
+                            widget.sounds[index].id == playerId
+                                ? Icon(
+                                  Icons.pause_circle_outline,
+                                  color: Colors.white,
+                                  size: 30,
+                                )
+                                : Icon(
+                                  Icons.play_circle_outlined,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                      ),
                     ),
                   );
                 },
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: KCustomButton(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        buttonText: "Cancel",
-                        isOutline: true,
-                        verticalPadding: 9,
-                        textStyle: const TextStyle(
-                            fontSize: 14, color: Colors.black),
-                      ),
-                    )),
-                const SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: KCustomButton(
-                          onTap: () async {
-                          },
-                          buttonText: "Apply",
-                          textStyle: const TextStyle(
-                              fontSize: 14, color: Colors.white),
-                          // buttonColor: const Color(0xff108045),
-                          gradient: kPrimaryGradient),
-                    )),
-              ],
-            ),
           ],
         ),
-      )
+      ),
     );
   }
 }
-Widget buildTitleSection(String title) {
-  return Text(
-    title,
-    style: const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.bold,
-    ),
-  );
-}
-
-/*
-Future showAddressBottomSheet({required BuildContext context,required SearchSalonController searchSalonController})async{
-
-  return showModalBottomSheet(
-    backgroundColor: Colors.white,
-    context: context,
-    builder: (s) {
-      searchSalonController.userAddressId.value = 0;
-      return FutureBuilder<List<UserAddressModel>>(
-          future: UserAddressApi.getUserAddress(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: KCustomCircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                  child: Text(snapshot.error.toString()));
-            } else if (snapshot.hasData  && snapshot.data!.isNotEmpty) {
-              log("User address ${snapshot.data}");
-              List<UserAddressModel>userAddressList = snapshot.data!;
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 13.0, vertical: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        buildTitleSection("Select Address"),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamed(context, Routes.addressSelectionView,
-                            arguments: {
-                              'fromSearchSalonPage':true,
-                            });
-                *//*            Navigator.pushNamed(
-                                context,
-                                Routes.userAddressViewRoute,
-                                arguments: {
-                                  'fromCheckOutPage': false,
-                                  'fromMyAccountPage': false,
-                                  'fromDashboardPage': false,
-                                  'fromSearchSalonPage':true
-                                });*//*
-                          },
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.add_circle,
-                                color:
-                                kPrimaryColor,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              buildTitleSection("Add Address"),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: userAddressList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Obx(() {
-                            log("User Address Id: ${searchSalonController.userAddressId.value}");
-                            log("Address Id: ${userAddressList[index].addressId}");
-                            bool isSelected = searchSalonController.userAddressId.value == userAddressList[index].addressId;
-                            /// If no address has been explicitly selected, use the default one
-                            if (searchSalonController.userAddressId.value == 0 && userAddressList[index].isDefault == 1) {
-                              isSelected = true;
-                              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                                searchSalonController.userAddressId.value= userAddressList[index].addressId;
-                           *//*     SelectedAddressModel selectedAddressModel = SelectedAddressModel(
-                                    streetAddress:"${userAddressList[index].area} ${userAddressList[index].state} ${userAddressList[index].country} ${userAddressList[index].pincode}",
-                                    state: userAddressList[index].state.toString(),
-                                    city: userAddressList[index].city.toString(),
-                                    pincode: userAddressList[index].pincode.toString(),
-                                    position: LatLng(double.parse(userAddressList[index].latitude), double.parse(userAddressList[index].longitude)));
-                                addressController.updateSelectedAddress(address: selectedAddressModel);*//*
-                              });
-                            }
-                            log("IsSelected: ${isSelected.toString()}");
-
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 13),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Stack(
-                                children: [
-                                  ListTile(
-                                    title: Text(
-                                        'Address: ${userAddressList[index].area} ${userAddressList[index].state} ${userAddressList[index].country} ${userAddressList[index].pincode}'),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Contact No: ${userAddressList[index].contactMobile}'),
-                                        Text('Name: ${userAddressList[index].contactPerson}'),
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 8,
-                                    top: 8,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, Routes.userAddressViewRoute,
-                                            arguments: {
-                                              "fromCheckOutPage": false,
-                                              'fromMyAccountPage': false,
-                                              "fromDashboardPage": false,
-                                              "fromSearchSalonPage": true,
-                                              'userMobileNumber': userAddressList[index].contactMobile,
-                                              "isShowLeadingIcon": true,
-                                              "userAddressModel": userAddressList[index]
-                                            });
-                                      },
-                                      child: const Padding(
-                                        padding: EdgeInsets.only(right: 8.0),
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 8,
-                                    bottom: 8,
-                                    child: Checkbox(
-                                      activeColor: kPrimaryColor,
-                                      value: isSelected,
-                                      onChanged: (value) {
-                                        searchSalonController.userAddressId.value = userAddressList[index].addressId;
-                                        log("Selected Address Id: ${searchSalonController.userAddressId.value}");
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-
-                              *//*Container(
-                              margin: const EdgeInsets.only(bottom: 13),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  'Address: ${userAddressList[index].area} ${userAddressList[index].city}  ${userAddressList[index].state} ${userAddressList[index].country}',
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Contact No: ${userAddressList[index].contactMobile}'),
-                                    Text('Name: ${userAddressList[index].contactPerson}'),
-                                  ],
-                                ),
-                                trailing: Checkbox(
-                                  activeColor: kPrimaryColor,
-                                  value: isSelected,
-                                  onChanged: (value) {
-                                    searchSalonController.userAddressId.value = userAddressList[index].addressId;
-                                    log("Selected Address Id: ${searchSalonController.userAddressId.value}");
-                                  },
-                                ),
-                              ),
-                            );*//*
-
-                          });
-                        },
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: KCustomButton(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                buttonText: "Cancel",
-                                isOutline: true,
-                                verticalPadding: 9,
-                                textStyle: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                              ),
-                            )),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: KCustomButton(
-                                  onTap: () async {
-                                    CustomPopups.showCustomLoadingPopup(
-                                        context: context);
-                                    var response =
-                                    await UserAddressApi.updateUserAddress(
-                                        data: {
-                                          "id": searchSalonController
-                                              .userAddressId.value,
-                                          "isDefault": 1
-                                        });
-                                    Navigator.pop(context);
-                                    log("Response $response");
-                                    if (response) {
-                                      Navigator.pop(context);
-                                      UserAddressModel selectedAddress = userAddressList.firstWhere((element) => element.addressId == searchSalonController.userAddressId.value);
-                                      searchSalonController.selectedAddress.value = "${selectedAddress.area} ${selectedAddress.city} ${selectedAddress.state} ${selectedAddress.country} ${selectedAddress.pincode}";
-                                    }
-                                  },
-                                  buttonText: "Apply",
-                                  textStyle: const TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                  buttonColor: const Color(0xff108045),
-                                  gradient: kPrimaryGradient),
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            } else if( snapshot.data!.isEmpty){
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("No Address Added yet. To add address tap below!!!",textAlign: TextAlign.center,),
-                      const SizedBox(height: 20,),
-                      KCustomButton(
-                        onTap: () {
-                          Navigator.pushNamed(context, Routes.addressSelectionView,
-                          arguments: {
-                            'fromSearchSalonPage':true,
-                          });
-              *//*            Navigator.pushNamed(
-                              context, Routes.userAddressViewRoute,
-                              arguments: {
-                                'fromCheckOutPage': false,
-                                'fromMyAccountPage':false,
-                                'fromSearchSalonPage':true,
-                                'fromDashboardPage': false,
-                              });*//*
-                        },
-                        buttonText: "Add Address",
-                        iconChild: const Icon(Icons.arrow_forward,
-                            color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-            else {
-              return const Center(
-                  child: Text("No Address Found"));
-            }
-          });
-    },
-  );
-}*/
