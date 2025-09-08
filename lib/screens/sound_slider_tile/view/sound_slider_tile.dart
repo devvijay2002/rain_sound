@@ -23,9 +23,6 @@ class SoundSliderTile extends StatelessWidget {
     required this.onChanged,
   });
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -58,8 +55,11 @@ class SoundSliderTile extends StatelessWidget {
                   backgroundColor: Colors.black38,
                   context: context,
                   builder: (context) {
-                    return ChangePopupView(audioService: audioService, sounds: rainSounds,);
-                  }
+                    return ChangePopupView(
+                      audioService: audioService,
+                      sounds: rainSounds,
+                    );
+                  },
                 );
               },
               child: Container(
@@ -112,5 +112,4 @@ class SoundSliderTile extends StatelessWidget {
       ),
     );
   }
-
 }

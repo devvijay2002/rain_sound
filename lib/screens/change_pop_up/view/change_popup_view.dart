@@ -1,10 +1,14 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rain_round/model/sound_model.dart';
-import 'package:rain_round/service/sound_library.dart';
+import 'package:rain_round/screens/home/controller/home_controller.dart';
 
+import '../../../controller/sharecontroller.dart';
 import '../../../service/audio_service_controller.dart';
 
 class ChangePopupView extends StatefulWidget {
@@ -24,25 +28,27 @@ class ChangePopupView extends StatefulWidget {
 class _ChangePopupViewState extends State<ChangePopupView> {
   final Map<String, double> _volumes = {};
   final AudioServiceController _audioService = AudioServiceController();
+  var homeController = Get.find<HomeController>();
 
   String playerId = "";
 
   Future<void> _toggleOn({required String playId}) async {
-    if (playerId == playId) {
-      // If same sound tapped again -> stop it
-      await _audioService.stopOne(playId);
+    homeController.isOn=false;
+    await widget.audioService.stopAll();
+    homeController.updateHomePage();
+    log('homeController.isOn....: ${homeController.isOn}');
+    if (playId == playerId) {
       playerId = '';
+      setState(() {});   // update UI immediately
+      await _audioService.stopOne(playId);
     } else {
-      // Stop previous one first
       if (playerId.isNotEmpty) {
         await _audioService.stopOne(playerId);
       }
-      // Play new one
-      await _audioService.playOne(playId, 1);
       playerId = playId;
+      setState(() {});   // update UI immediately
+      await _audioService.playOne(playId, 1);
     }
-
-    setState(() {}); // refresh UI
   }
 
 
@@ -72,7 +78,7 @@ class _ChangePopupViewState extends State<ChangePopupView> {
 
   @override
   Widget build(BuildContext context) {
-    log('build');
+    log('ChangePopupView Build called');
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -124,24 +130,23 @@ class _ChangePopupViewState extends State<ChangePopupView> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      trailing: InkWell(
+                      trailing: GestureDetector(
                         onTap: () async {
                           await _toggleOn(playId: widget.sounds[index].id);
-
                         },
                         child:
-                            widget.sounds[index].id == playerId
-                                ? Icon(
-                                  Icons.pause_circle_outline,
-                                  color: Colors.white,
-                                  size: 30,
-                                )
-                                : Icon(
-                                  Icons.play_circle_outlined,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                      ),
+                        widget.sounds[index].id == playerId
+                            ? Icon(
+                          Icons.pause_circle_outline,
+                          color: Colors.white,
+                          size: 30,
+                        )
+                            : Icon(
+                          Icons.play_circle_outlined,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      )
                     ),
                   );
                 },
