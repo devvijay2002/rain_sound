@@ -11,6 +11,8 @@ import 'package:rain_round/service/audio_service_controller.dart';
 import 'package:rain_round/service/sound_library.dart';
 
 import '../../../controller/sharecontroller.dart';
+import '../../../model/sound_model.dart';
+import '../../../service/local_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,22 +29,25 @@ class _HomeScreenState extends State<HomeScreen> {
   double _masterVolume = 1.0;
   final Map<String, double> _volumes = {};
 
+  late Future<bool> isLoaded;
+
   @override
   void initState() {
     super.initState();
-    _initializeApp();
+    isLoaded = initializeApp();
   }
 
-  Future<void> _initializeApp() async {
+  Future<bool> initializeApp() async {
     try {
       // Initialize volumes with default values
-      for (var sound in kSounds) {
+      for (var sound in homeController.sounds) {
         _volumes[sound.id] = sound.defaultVolume;
       }
-      await _audioService.initPlayers(kSounds);
+      await _audioService.initPlayers(homeController.sounds);
     } catch (e) {
       debugPrint('Error initializing app: $e');
     }
+    return true;
   }
 
   Future<void> _toggleOn() async {
@@ -73,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     if (homeController.isOn) {
-      for (var sound in kSounds) {
+      for (var sound in homeController.sounds) {
         await _audioService.setVolume(sound.id, _getEffectiveVolume(sound.id));
       }
     }
@@ -174,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: Alignment.center,
                       child: Column(
                         children: [
-                          ...kSounds.map(
+                          ...homeController.sounds.map(
                             (sound) => Column(
                               children: [
                                 SoundSliderTile(
@@ -184,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   enabled: homeController.isOn,
                                   onChanged: (v) => _setVolume(sound.id, v),
                                 ),
-                                if (sound != kSounds.last)
+                                if (sound != homeController.sounds.last)
                                   Divider(
                                     color: Colors.white.withOpacity(0.2),
                                     // thickness: 1,

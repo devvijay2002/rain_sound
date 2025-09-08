@@ -1,20 +1,23 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../model/sound_model.dart';
 import '../../../service/audio_service_controller.dart';
 import '../../../service/sound_library.dart';
 import '../../change_pop_up/view/change_popup_view.dart';
+import '../../home/controller/home_controller.dart';
 
-class SoundSliderTile extends StatelessWidget {
+class SoundSliderTile extends StatefulWidget {
   final AudioServiceController audioService;
   final Sound sound;
   final double value;
   final bool enabled;
   final ValueChanged<double> onChanged;
 
-  const SoundSliderTile({
+   const SoundSliderTile({
     super.key,
     required this.sound,
     required this.audioService,
@@ -24,19 +27,26 @@ class SoundSliderTile extends StatelessWidget {
   });
 
   @override
+  State<SoundSliderTile> createState() => _SoundSliderTileState();
+}
+
+class _SoundSliderTileState extends State<SoundSliderTile> {
+  var homeController = Get.find<HomeController>();
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       minVerticalPadding: 0,
       dense: true,
-      leading: Icon(sound.icon, size: 32, color: Colors.white),
+      leading: Icon(widget.sound.icon, size: 32, color: Colors.white),
 
       title: Padding(
         padding: const EdgeInsets.only(top: 5.0),
         child: Row(
           children: [
             Text(
-              sound.name,
+              widget.sound.name,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white,
@@ -56,7 +66,7 @@ class SoundSliderTile extends StatelessWidget {
                   context: context,
                   builder: (context) {
                     return ChangePopupView(
-                      audioService: audioService,
+                      audioService: widget.audioService,
                       sounds: rainSounds,
                     );
                   },
@@ -73,8 +83,7 @@ class SoundSliderTile extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Text(
-                      "rain1",
+                    Text(homeController.sounds[0].name,
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                     Icon(Icons.arrow_drop_down_outlined, color: Colors.white),
@@ -102,12 +111,12 @@ class SoundSliderTile extends StatelessWidget {
           inactiveTickMarkColor: Colors.white,
         ),
         child: Slider(
-          value: value,
-          onChanged: enabled ? onChanged : null,
+          value: widget.value,
+          onChanged: widget.enabled ? widget.onChanged : null,
           min: 0.0,
           max: 1.0,
           // divisions: 20,
-          label: "${(value * 100).round()}%",
+          label: "${(widget.value * 100).round()}%",
         ),
       ),
     );

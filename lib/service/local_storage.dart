@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:rain_round/model/sound_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -30,4 +33,24 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('vol_$soundId') ?? defaultValue;
   }
+
+  static Future<void> saveSounds({required List<Sound> sounds}) async {
+    final prefs = await SharedPreferences.getInstance();
+    var jsonString = json.encode(sounds.map((sound) => sound.toJson()).toList());
+    await prefs.setString('sounds', jsonString);
+  }
+
+  static Future<List<Sound>> getSounds() async {
+    try{
+      final prefs = await SharedPreferences.getInstance();
+      var jsonString = prefs.getString('sounds');
+      if (jsonString == null) {
+        return [];
+      }
+      return Sound.listFromJson(jsonString);
+    }catch(e){
+      return [];
+    }
+  }
+
 }
