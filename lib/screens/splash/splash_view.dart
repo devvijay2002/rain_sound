@@ -16,8 +16,8 @@ class SplashView extends StatefulWidget {
 }
 
 class _SplashViewState extends State<SplashView> {
-
   var homeController = Get.find<HomeController>();
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,10 @@ class _SplashViewState extends State<SplashView> {
     }
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
-    Navigator.push(context,MaterialPageRoute(builder: (context)=>HomeScreen()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   @override

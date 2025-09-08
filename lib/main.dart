@@ -17,10 +17,7 @@ class RainSoundApp extends StatelessWidget {
     return GetMaterialApp(
       initialBinding: AppBinding(),
       title: 'Rain Sound: Better Sleep',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-        useMaterial3: true,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blueGrey, useMaterial3: true),
       home: const SplashView(),
       debugShowCheckedModeBanner: false,
     );

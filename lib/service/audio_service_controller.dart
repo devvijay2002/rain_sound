@@ -79,8 +79,7 @@ class AudioServiceController {
     }
   }
 
-
-// In AudioServiceController
+  // In AudioServiceController
 
   Future<void> stopAll() async {
     try {
@@ -127,7 +126,6 @@ class AudioServiceController {
       log("Error on stopSingle($playerId): $e\n$st");
     }
   }
-
 
   Future<void> setVolume(String soundId, double volume) async {
     try {

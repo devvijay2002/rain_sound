@@ -10,6 +10,6 @@ class AppBinding extends Bindings {
     // This binding is kept for future dependencies
 
     Get.put(SharedController(), permanent: true);
-    Get.lazyPut<HomeController>(() => HomeController(),fenix: true);
+    Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
   }
 }

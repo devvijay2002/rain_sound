@@ -7,7 +7,6 @@ import 'package:rain_round/screens/home/controller/home_controller.dart';
 import '../../../service/audio_service_controller.dart';
 import '../../../service/local_storage.dart';
 
-
 class ChangePopupView extends StatefulWidget {
   final List<Sound> sounds;
   final AudioServiceController audioService;
@@ -27,8 +26,6 @@ class _ChangePopupViewState extends State<ChangePopupView> {
   final AudioServiceController _audioService = AudioServiceController();
   var homeController = Get.find<HomeController>();
   String playerId = "";
-
-
 
   Future<void> _toggleOn({required String playId}) async {
     homeController.isOn = false;
@@ -52,7 +49,8 @@ class _ChangePopupViewState extends State<ChangePopupView> {
   Future<void> setSound({required Sound newSound}) async {
     log('newSound: ${newSound.name}');
     var rainSoundIndex = homeController.sounds.indexWhere(
-        (element) => element.name.toLowerCase().contains("rain"));
+      (element) => element.name.toLowerCase().contains("rain"),
+    );
     if (rainSoundIndex != -1) {
       homeController.sounds.removeAt(rainSoundIndex);
     }
@@ -120,7 +118,9 @@ class _ChangePopupViewState extends State<ChangePopupView> {
                   return GestureDetector(
                     onTap: () async {
                       await setSound(newSound: widget.sounds[index]);
-                      log('homeController.sounds.length: ${homeController.sounds.length}');
+                      log(
+                        'homeController.sounds.length: ${homeController.sounds.length}',
+                      );
                       homeController.isOn = true;
                       Navigator.pop(context);
                     },

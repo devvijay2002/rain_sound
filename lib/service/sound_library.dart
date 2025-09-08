@@ -13,7 +13,7 @@ final List<Sound> kSounds = [
   Sound(
     id: "frogs",
     name: "Frogs",
-    assetPath:frog1,
+    assetPath: frog1,
     icon: Icons.nature,
     defaultVolume: 0.3,
   ),
@@ -40,9 +40,6 @@ final List<Sound> kSounds = [
   ),
 ];
 
-
-
-
 final List<Sound> rainSounds = [
   Sound(
     id: "rain1",
@@ -54,7 +51,7 @@ final List<Sound> rainSounds = [
   Sound(
     id: "rain2",
     name: "Rain2",
-    assetPath:rain2,
+    assetPath: rain2,
     icon: Icons.nature,
     defaultVolume: 0.3,
   ),

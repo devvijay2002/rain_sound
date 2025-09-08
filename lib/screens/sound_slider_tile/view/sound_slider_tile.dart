@@ -17,7 +17,7 @@ class SoundSliderTile extends StatefulWidget {
   final bool enabled;
   final ValueChanged<double> onChanged;
 
-   const SoundSliderTile({
+  const SoundSliderTile({
     super.key,
     required this.sound,
     required this.audioService,
@@ -83,7 +83,8 @@ class _SoundSliderTileState extends State<SoundSliderTile> {
                 ),
                 child: Row(
                   children: [
-                    Text(homeController.sounds[0].name,
+                    Text(
+                      homeController.sounds[0].name,
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                     Icon(Icons.arrow_drop_down_outlined, color: Colors.white),

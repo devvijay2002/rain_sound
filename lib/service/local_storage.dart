@@ -36,21 +36,22 @@ class LocalStorage {
 
   static Future<void> saveSounds({required List<Sound> sounds}) async {
     final prefs = await SharedPreferences.getInstance();
-    var jsonString = json.encode(sounds.map((sound) => sound.toJson()).toList());
+    var jsonString = json.encode(
+      sounds.map((sound) => sound.toJson()).toList(),
+    );
     await prefs.setString('sounds', jsonString);
   }
 
   static Future<List<Sound>> getSounds() async {
-    try{
+    try {
       final prefs = await SharedPreferences.getInstance();
       var jsonString = prefs.getString('sounds');
       if (jsonString == null) {
         return [];
       }
       return Sound.listFromJson(jsonString);
-    }catch(e){
+    } catch (e) {
       return [];
     }
   }
-
 }
