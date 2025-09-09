@@ -34,7 +34,7 @@ class _SplashViewState extends State<SplashView> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => HomeScreen(afterChange: false,)),
     );
   }
 

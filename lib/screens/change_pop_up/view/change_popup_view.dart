@@ -6,6 +6,7 @@ import 'package:rain_round/model/sound_model.dart';
 import 'package:rain_round/screens/home/controller/home_controller.dart';
 import '../../../service/audio_service_controller.dart';
 import '../../../service/local_storage.dart';
+import '../../home/view/home_screen.dart';
 
 class ChangePopupView extends StatefulWidget {
   final List<Sound> sounds;
@@ -28,6 +29,7 @@ class _ChangePopupViewState extends State<ChangePopupView> {
   String playerId = "";
 
   Future<void> _toggleOn({required String playId}) async {
+
     homeController.isOn = false;
     await widget.audioService.stopAll();
     homeController.updateHomePage();
@@ -56,6 +58,8 @@ class _ChangePopupViewState extends State<ChangePopupView> {
     }
     homeController.sounds.insert(0, newSound);
     await LocalStorage.saveSounds(sounds: homeController.sounds);
+    homeController.isOn = true;
+    // widget.audioService.playAll(volumes)
     homeController.updateHomePage();
   }
 
@@ -118,11 +122,13 @@ class _ChangePopupViewState extends State<ChangePopupView> {
                   return GestureDetector(
                     onTap: () async {
                       await setSound(newSound: widget.sounds[index]);
-                      log(
-                        'homeController.sounds.length: ${homeController.sounds.length}',
-                      );
-                      homeController.isOn = true;
+                      log('homecontroller isOn in chanagePop Up: ${homeController.isOn}');
                       Navigator.pop(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+                        return HomeScreen(
+                          afterChange: true,
+                        );
+                      }));
                     },
                     child: Container(
                       // padding: const EdgeInsets.all(3.0),

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rain_round/const/images.dart';
 import 'package:rain_round/screens/home/controller/home_controller.dart';
@@ -9,7 +10,9 @@ import 'package:rain_round/service/audio_service_controller.dart';
 import '../../../controller/sharecontroller.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool afterChange;
+
+  const HomeScreen({super.key, required this.afterChange});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,10 +41,21 @@ class _HomeScreenState extends State<HomeScreen> {
         _volumes[sound.id] = sound.defaultVolume;
       }
       await _audioService.initPlayers(homeController.sounds);
+      widget.afterChange == true ? await _playAllSoundAfterChange() : null;
     } catch (e) {
       debugPrint('Error initializing app: $e');
     }
     return true;
+  }
+
+  Future<void> _playAllSoundAfterChange() async {
+    if (homeController.isOn) {
+      log('homeController.isOn in home: ${homeController.isOn}');
+      await _audioService.playAll(_getEffectiveVolumes());
+    } else {
+      log('homeController.isOn in home else: ${homeController.isOn}');
+      await _audioService.stopAll();
+    }
   }
 
   Future<void> _toggleOn() async {
@@ -50,8 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     if (homeController.isOn) {
+      log('homeController.isOn in home: ${homeController.isOn}');
       await _audioService.playAll(_getEffectiveVolumes());
     } else {
+      log('homeController.isOn in home else: ${homeController.isOn}');
       await _audioService.stopAll();
     }
   }
@@ -96,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log('home Build called');
+    log('widget.afterChange: ${widget.afterChange}');
     return Scaffold(
       body: GetBuilder<HomeController>(
         id: 'home',
@@ -178,6 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 SoundSliderTile(
                                   audioService: _audioService,
+                                  isRain: sound.name.toLowerCase().contains(
+                                    "rain",
+                                  ),
                                   sound: sound,
                                   value: _volumes[sound.id] ?? 0.5,
                                   enabled: homeController.isOn,

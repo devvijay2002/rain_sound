@@ -1,8 +1,6 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../model/sound_model.dart';
 import '../../../service/audio_service_controller.dart';
@@ -15,11 +13,13 @@ class SoundSliderTile extends StatefulWidget {
   final Sound sound;
   final double value;
   final bool enabled;
+  final bool isRain;
   final ValueChanged<double> onChanged;
 
   const SoundSliderTile({
     super.key,
     required this.sound,
+    required this.isRain,
     required this.audioService,
     required this.value,
     required this.enabled,
@@ -33,8 +33,10 @@ class SoundSliderTile extends StatefulWidget {
 class _SoundSliderTileState extends State<SoundSliderTile> {
   var homeController = Get.find<HomeController>();
 
+
   @override
   Widget build(BuildContext context) {
+    log('isRain: ${widget.isRain}');
     return ListTile(
       contentPadding: EdgeInsets.zero,
       minVerticalPadding: 0,
@@ -58,7 +60,7 @@ class _SoundSliderTileState extends State<SoundSliderTile> {
               ),
             ),
             Spacer(),
-            GestureDetector(
+           widget.isRain ? GestureDetector(
               onTap: () {
                 log('bottom sheet');
                 showModalBottomSheet(
@@ -91,7 +93,7 @@ class _SoundSliderTileState extends State<SoundSliderTile> {
                   ],
                 ),
               ),
-            ),
+            ):Container(),
           ],
         ),
       ),

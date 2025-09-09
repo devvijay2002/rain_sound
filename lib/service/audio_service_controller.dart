@@ -30,7 +30,6 @@ class AudioServiceController {
       log("playAll called. Players to play: ${_players.length}");
 
       final futures = <Future>[];
-
       for (final entry in _players.entries) {
         final volume = volumes[entry.key] ?? 0.0;
         log("Setting volume for ${entry.key}: $volume");
