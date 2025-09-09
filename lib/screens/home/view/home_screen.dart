@@ -8,7 +8,6 @@ import 'package:rain_round/screens/sound_slider_tile/view/sound_slider_tile.dart
 import 'package:rain_round/service/audio_service_controller.dart';
 import '../../../controller/sharecontroller.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -310,4 +309,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
