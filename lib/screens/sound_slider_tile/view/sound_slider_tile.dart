@@ -33,7 +33,6 @@ class SoundSliderTile extends StatefulWidget {
 class _SoundSliderTileState extends State<SoundSliderTile> {
   var homeController = Get.find<HomeController>();
 
-
   @override
   Widget build(BuildContext context) {
     log('isRain: ${widget.isRain}');
@@ -42,7 +41,6 @@ class _SoundSliderTileState extends State<SoundSliderTile> {
       minVerticalPadding: 0,
       dense: true,
       leading: Icon(widget.sound.icon, size: 32, color: Colors.white),
-
       title: Padding(
         padding: const EdgeInsets.only(top: 5.0),
         child: Row(
@@ -60,40 +58,45 @@ class _SoundSliderTileState extends State<SoundSliderTile> {
               ),
             ),
             Spacer(),
-           widget.isRain ? GestureDetector(
-              onTap: () {
-                log('bottom sheet');
-                showModalBottomSheet(
-                  backgroundColor: Colors.black38,
-                  context: context,
-                  builder: (context) {
-                    return ChangePopupView(
-                      audioService: widget.audioService,
-                      sounds: rainSounds,
+            widget.isRain
+                ? GestureDetector(
+                  onTap: () {
+                    log('bottom sheet');
+                    showModalBottomSheet(
+                      backgroundColor: Colors.black38,
+                      context: context,
+                      builder: (context) {
+                        return ChangePopupView(
+                          audioService: widget.audioService,
+                          sounds: rainSounds,
+                        );
+                      },
                     );
                   },
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(color: Colors.white.withOpacity(0.5)),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      homeController.sounds[0].name,
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 2,
                     ),
-                    Icon(Icons.arrow_drop_down_outlined, color: Colors.white),
-                  ],
-                ),
-              ),
-            ):Container(),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      border: Border.all(color: Colors.white.withOpacity(0.5)),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          homeController.sounds[0].name,
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down_outlined,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                : Container(),
           ],
         ),
       ),

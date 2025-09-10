@@ -34,6 +34,7 @@ class LocalStorage {
     return prefs.getDouble('vol_$soundId') ?? defaultValue;
   }
 
+
   static Future<void> saveSounds({required List<Sound> sounds}) async {
     final prefs = await SharedPreferences.getInstance();
     var jsonString = json.encode(

@@ -10,6 +10,7 @@ final List<Sound> kSounds = [
     icon: Icons.grain,
     defaultVolume: 0.7,
   ),
+
   Sound(
     id: "frogs",
     name: "Frogs",

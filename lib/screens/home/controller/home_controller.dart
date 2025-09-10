@@ -7,5 +7,6 @@ class HomeController extends GetxController {
 
   void updateHomePage() {
     update(['home']);
+
   }
 }

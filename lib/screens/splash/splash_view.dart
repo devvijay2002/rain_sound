@@ -24,6 +24,7 @@ class _SplashViewState extends State<SplashView> {
     initializeRoute();
   }
 
+
   Future<void> initializeRoute() async {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     homeController.sounds = await LocalStorage.getSounds();

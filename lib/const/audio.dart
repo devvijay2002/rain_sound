@@ -9,3 +9,4 @@ const rain3 = 'assets/sounds/rain3.mp3';
 const rain4 = 'assets/sounds/rain4.mp3';
 const rain5 = 'assets/sounds/rain5.mp3';
 const wind1 = 'assets/sounds/wind1.mp3'; // Add this line for the wind sound
+

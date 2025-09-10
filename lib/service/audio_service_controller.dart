@@ -1,13 +1,13 @@
 import 'dart:developer';
-
 import 'package:just_audio/just_audio.dart';
-
 import '../model/sound_model.dart';
+
 
 class AudioServiceController {
   final Map<String, AudioPlayer> _players = {};
 
   Future<void> initPlayers(List<Sound> sounds) async {
+    log('sounds name: ${sounds[0].name}');
     try {
       // Dispose existing players before creating new ones
       for (final player in _players.values) {
@@ -28,7 +28,6 @@ class AudioServiceController {
   Future<void> playAll(Map<String, double> volumes) async {
     try {
       log("playAll called. Players to play: ${_players.length}");
-
       final futures = <Future>[];
       for (final entry in _players.entries) {
         final volume = volumes[entry.key] ?? 0.0;
@@ -44,7 +43,6 @@ class AudioServiceController {
           log("Player already playing: ${entry.key}");
         }
       }
-
       // Wait for all async tasks to complete
       await Future.wait(futures);
       log("All players started.");
@@ -79,7 +77,6 @@ class AudioServiceController {
   }
 
   // In AudioServiceController
-
   Future<void> stopAll() async {
     try {
       log("stopAll called. Players: ${_players.length}");

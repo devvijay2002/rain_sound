@@ -7,6 +7,7 @@ class SoundSliderTile extends StatelessWidget {
   final bool enabled;
   final ValueChanged<double> onChanged;
 
+
   const SoundSliderTile({
     super.key,
     required this.sound,
